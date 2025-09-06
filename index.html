@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спидран по играм Ali-GG</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Подключаем иконки Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Главное меню -->
+    <section id="main-menu" class="screen active">
+        <h1 class="gradient-text">Спидран по играм Ali-GG</h1>
+        <nav class="menu-nav">
+            <button onclick="showScreen('play')">Играть</button>
+            <button onclick="showScreen('instructions')">Инструкция</button>
+            <button onclick="showScreen('authors')">Авторы</button>
+            <button onclick="showScreen('settings')">Настройки</button>
+        </nav>
+    </section>
+
+    <!-- Экран игры -->
+    <section id="play" class="screen">
+        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
+        <div class="level-container">
+            <!-- Уровни будут подгружаться динамически через JS -->
+        </div>
+        <div class="timer">Время: <span id="global-timer">00:00:00</span></div>
+    </section>
+
+    <!-- Экран инструкции -->
+    <section id="instructions" class="screen">
+        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
+        <h2>Инструкция</h2>
+        <div class="instructions-content">
+            <p>Добро пожаловать в спидран по играм! Ваша задача - пройти 5 уровней как можно быстрее.</p>
+            <ol>
+                <li><strong>Угадай число:</strong> С помощью ползунка выберите число от 0 до 100. Получайте подсказки "больше" или "меньше".</li>
+                <li><strong>Найди пару:</strong> Открывайте карты и находите все пары за минимальное количество ходов.</li>
+                <li><strong>Камень-Ножницы-Бумага:</strong> Выиграйте у робота 3 раза.</li>
+                <li><strong>Викторина:</strong> Ответьте правильно на 10 вопросов из базы.</li>
+                <li><strong>2D Игра:</strong> Соберите 15 изумрудов, избегая бомб.</li>
+            </ol>
+            <p>Удачи!</p>
+        </div>
+    </section>
+
+    <!-- Экран авторов -->
+    <section id="authors" class="screen">
+        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
+        <h2>Авторы</h2>
+        <div class="authors-content">
+            <p>Этот проект был создан Ali-GG.</p>
+            <div class="social-links">
+                <a href="https://youtube.com/ваш_канал" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://tiktok.com/ваш_аккаунт" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a href="https://t.me/ваш_канал" target="_blank" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Экран настроек -->
+    <section id="settings" class="screen">
+        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
+        <h2>Настройки</h2>
+        <div class="settings-content">
+            <div class="setting">
+                <label for="theme-switch">Темная тема:</label>
+                <label class="switch">
+                    <input type="checkbox" id="theme-switch" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="setting">
+                <label for="volume-slider">Громкость:</label>
+                <input type="range" id="volume-slider" min="0" max="100" value="80">
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

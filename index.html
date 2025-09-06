@@ -1,14 +1,461 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Спидран по играм Ali-GG</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Подключаем иконки Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #007CFB, #000);
+            --text-color: #f0f0f0;
+            --bg-color: #222;
+            --card-bg: #333;
+            --button-bg: #444;
+            --button-hover: #555;
+            --success-color: #4CAF50;
+            --error-color: #f44336;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] {
+            --text-color: #222;
+            --bg-color: #f0f0f0;
+            --card-bg: #ddd;
+            --button-bg: #ccc;
+            --button-hover: #bbb;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: url('images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: var(--transition);
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .gradient-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .menu-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .menu-nav button {
+            padding: 1rem;
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-nav button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-3px);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .level-container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
+            margin: 1rem;
+        }
+
+        .timer {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-color);
+            font-size: 2rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+        }
+
+        .setting {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin: 1rem 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        #volume-slider {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        /* Game specific styles */
+        .slider-container {
+            width: 100%;
+            margin: 2rem 0;
+        }
+
+        #number-slider {
+            width: 100%;
+            height: 25px;
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .hint {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .memory-game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 285/420;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card .card-front,
+        .memory-card .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .memory-card .card-front {
+            background-color: #444;
+            font-size: 2rem;
+        }
+
+        .memory-card .card-back {
+            background-color: #fff;
+            transform: rotateY(180deg);
+        }
+
+        .memory-card .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .memory-card.matched {
+            visibility: hidden;
+        }
+
+        .rps-choices {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .rps-choice {
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .rps-choice:hover {
+            transform: scale(1.1);
+        }
+
+        .rps-choice img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .rps-result {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .quiz-container {
+            width: 100%;
+        }
+
+        .quiz-question {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .quiz-options button {
+            padding: 1rem;
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quiz-options button.correct {
+            background-color: var(--success-color);
+        }
+
+        .quiz-options button.incorrect {
+            background-color: var(--error-color);
+        }
+
+        .quiz-result {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .game-2d-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .game-2d {
+            width: 100%;
+            height: 400px;
+            background-color: #444;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            transition: left 0.1s linear;
+        }
+
+        .falling-object {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            top: -30px;
+            animation: fall linear infinite;
+        }
+
+        .emerald {
+            background-color: #4CAF50;
+        }
+
+        .bomb {
+            background-color: #f44336;
+        }
+
+        .game-stats {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .level-results {
+            margin: 1rem 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fall {
+            from { transform: translateY(-100px); }
+            to { transform: translateY(450px); }
+        }
+
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .gradient-text {
+                font-size: 2rem;
+            }
+            
+            .menu-nav {
+                max-width: 250px;
+            }
+            
+            .level-container {
+                padding: 1rem;
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .rps-choice img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
 </head>
-<body>
+<body data-theme="dark">
     <!-- Главное меню -->
     <section id="main-menu" class="screen active">
         <h1 class="gradient-text">Спидран по играм Ali-GG</h1>
@@ -79,6 +526,191 @@
         </div>
     </section>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <script>
+        // Основные переменные и состояние приложения
+        let currentScreen = 'main-menu';
+        let gameState = {
+            currentLevel: 1,
+            levelTimes: [],
+            totalTime: 0,
+            timerInterval: null
+        };
+
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            // Восстановление темы из localStorage
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('theme-switch').checked = (savedTheme === 'dark');
+            
+            // Восстановление громкости
+            const savedVolume = localStorage.getItem('volume') || 80;
+            document.getElementById('volume-slider').value = savedVolume;
+            
+            // Показ главного меню
+            showScreen('main-menu');
+            
+            // Настройки темы
+            document.getElementById('theme-switch').addEventListener('change', function(e) {
+                const theme = e.target.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            });
+            
+            // Настройки громкости
+            document.getElementById('volume-slider').addEventListener('input', function(e) {
+                localStorage.setItem('volume', e.target.value);
+            });
+        });
+
+        // Переключение между экранами
+        function showScreen(screenId) {
+            // Скрыть все экраны
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Показать запрошенный экран
+            document.getElementById(screenId).classList.add('active');
+            currentScreen = screenId;
+            
+            // Если переходим к игре, инициализируем уровень
+            if (screenId === 'play') {
+                initializeLevel(gameState.currentLevel);
+                startTimer();
+            }
+        }
+
+        // Инициализация уровня игры
+        function initializeLevel(levelNumber) {
+            const levelContainer = document.querySelector('.level-container');
+            levelContainer.innerHTML = ''; // Очистка контейнера
+            
+            switch(levelNumber) {
+                case 1:
+                    initGuessNumberGame(levelContainer);
+                    break;
+                case 2:
+                    initMemoryGame(levelContainer);
+                    break;
+                case 3:
+                    initRockPaperScissors(levelContainer);
+                    break;
+                case 4:
+                    initQuizGame(levelContainer);
+                    break;
+                case 5:
+                    init2DGame(levelContainer);
+                    break;
+                default:
+                    showResults();
+            }
+        }
+
+        // Таймер игры
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            const startTime = Date.now() - gameState.totalTime;
+            
+            gameState.timerInterval = setInterval(() => {
+                const elapsedTime = Date.now() - startTime;
+                gameState.totalTime = elapsedTime;
+                updateTimerDisplay(elapsedTime);
+            }, 10);
+        }
+
+        function stopTimer() {
+            clearInterval(gameState.timerInterval);
+        }
+
+        function updateTimerDisplay(time) {
+            const hours = Math.floor(time / 3600000);
+            const minutes = Math.floor((time % 3600000) / 60000);
+            const seconds = Math.floor((time % 60000) / 1000);
+            const ms = Math.floor((time % 1000) / 10);
+            
+            document.getElementById('global-timer').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        }
+
+        // Переход к следующему уровню
+        function nextLevel() {
+            // Зафиксировать время прохождения текущего уровня
+            const levelTime = gameState.totalTime - gameState.levelTimes.reduce((a, b) => a + b, 0);
+            gameState.levelTimes.push(levelTime);
+            
+            // Перейти к следующему уровню или показать результаты
+            gameState.currentLevel++;
+            if (gameState.currentLevel <= 5) {
+                initializeLevel(gameState.currentLevel);
+            } else {
+                showResults();
+            }
+        }
+
+        // Показ результатов после прохождения всех уровней
+        function showResults() {
+            stopTimer();
+            
+            const levelContainer = document.querySelector('.level-container');
+            levelContainer.innerHTML = `
+                <h2>Результаты</h2>
+                <p>Общее время: ${formatTime(gameState.totalTime)}</p>
+                <div class="level-results">
+                    ${gameState.levelTimes.map((time, index) => `
+                        <p>Уровень ${index + 1}: ${formatTime(time)}</p>
+                    `).join('')}
+                </div>
+                <button onclick="showScreen('main-menu'); gameState = { currentLevel: 1, levelTimes: [], totalTime: 0, timerInterval: null }">В главное меню</button>
+            `;
+        }
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60000);
+            const seconds = Math.floor((time % 60000) / 1000);
+            const ms = Math.floor((time % 1000) / 10);
+            
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        }
+
+        // ===== РЕАЛИЗАЦИЯ КОНКРЕТНЫХ ИГР =====
+
+        // 1. Игра "Угадай число"
+        function initGuessNumberGame(container) {
+            const secretNumber = Math.floor(Math.random() * 101);
+            let attempts = 0;
+            
+            container.innerHTML = `
+                <h2>Уровень 1: Угадай число</h2>
+                <div class="slider-container">
+                    <input type="range" min="0" max="100" value="50" class="slider" id="number-slider">
+                    <div class="slider-value">Текущее значение: <span id="current-value">50</span></div>
+                </div>
+                <button id="guess-button">Проверить</button>
+                <div id="hint" class="hint"></div>
+            `;
+            
+            const slider = document.getElementById('number-slider');
+            const currentValue = document.getElementById('current-value');
+            const guessButton = document.getElementById('guess-button');
+            const hint = document.getElementById('hint');
+            
+            slider.addEventListener('input', () => {
+                currentValue.textContent = slider.value;
+            });
+            
+            guessButton.addEventListener('click', () => {
+                attempts++;
+                const guess = parseInt(slider.value);
+                
+                if (guess === secretNumber) {
+                    hint.textContent = `Поздравляю! Вы угадали число ${secretNumber} за ${attempts} попыток.`;
+                    hint.style.color = 'var(--success-color)';
+                    
+                    // Автопереход через 2 секунды
+                    setTimeout(nextLevel, 2000);
+                } else if (guess < secretNumber) {
+                    hint.textContent = 'Попробуйте число больше';
+                    hint.style.color = 'var(--error-color)';
+                    // Анимация появления подсказки
+                    hint.style.animation = 'fadeIn 0.5s';

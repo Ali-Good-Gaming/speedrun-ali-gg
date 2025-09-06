@@ -4,713 +4,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Спидран по играм Ali-GG</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
-        :root {
-            --primary-gradient: linear-gradient(135deg, #007CFB, #000);
-            --text-color: #f0f0f0;
-            --bg-color: #222;
-            --card-bg: #333;
-            --button-bg: #444;
-            --button-hover: #555;
-            --success-color: #4CAF50;
-            --error-color: #f44336;
-            --transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] {
-            --text-color: #222;
-            --bg-color: #f0f0f0;
-            --card-bg: #ddd;
-            --button-bg: #ccc;
-            --button-hover: #bbb;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-image: url('images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: var(--transition);
-        }
-
-        .screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        .gradient-text {
-            font-size: 2.5rem;
-            font-weight: bold;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .menu-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .menu-nav button {
-            padding: 1rem;
-            background-color: var(--button-bg);
-            color: var(--text-color);
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .menu-nav button:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-3px);
-        }
-
-        .back-button {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            padding: 0.5rem 1rem;
-            background-color: var(--button-bg);
-            color: var(--text-color);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .level-container {
-            background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 800px;
-            margin: 1rem;
-        }
-
-        .timer {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            font-size: 1.2rem;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-links a {
-            color: var(--text-color);
-            font-size: 2rem;
-            transition: var(--transition);
-        }
-
-        .social-links a:hover {
-            transform: scale(1.2);
-        }
-
-        .setting {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 300px;
-            margin: 1rem 0;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
-        #volume-slider {
-            width: 100%;
-            max-width: 200px;
-        }
-
-        /* Game specific styles */
-        .slider-container {
-            width: 100%;
-            margin: 2rem 0;
-        }
-
-        #number-slider {
-            width: 100%;
-            height: 25px;
-        }
-
-        .slider-value {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .hint {
-            margin-top: 1rem;
-            padding: 0.5rem;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .memory-game-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .memory-card {
-            aspect-ratio: 285/420;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-            cursor: pointer;
-        }
-
-        .memory-card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .memory-card .card-front,
-        .memory-card .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
-        }
-
-        .memory-card .card-front {
-            background-color: #444;
-            font-size: 2rem;
-        }
-
-        .memory-card .card-back {
-            background-color: #fff;
-            transform: rotateY(180deg);
-        }
-
-        .memory-card .card-back img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
-        .memory-card.matched {
-            visibility: hidden;
-        }
-
-        .rps-choices {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .rps-choice {
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .rps-choice:hover {
-            transform: scale(1.1);
-        }
-
-        .rps-choice img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-        }
-
-        .rps-result {
-            text-align: center;
-            margin-top: 1rem;
-        }
-
-        .quiz-container {
-            width: 100%;
-        }
-
-        .quiz-question {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .quiz-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .quiz-options button {
-            padding: 1rem;
-            background-color: var(--button-bg);
-            color: var(--text-color);
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .quiz-options button.correct {
-            background-color: var(--success-color);
-        }
-
-        .quiz-options button.incorrect {
-            background-color: var(--error-color);
-        }
-
-        .quiz-result {
-            text-align: center;
-            margin-top: 1rem;
-            font-weight: bold;
-        }
-
-        .game-2d-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .game-2d {
-            width: 100%;
-            height: 400px;
-            background-color: #444;
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .player {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 50px;
-            background-color: #4CAF50;
-            border-radius: 50%;
-            transition: left 0.1s linear;
-        }
-
-        .falling-object {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            top: -30px;
-            animation: fall linear infinite;
-        }
-
-        .emerald {
-            background-color: #4CAF50;
-        }
-
-        .bomb {
-            background-color: #f44336;
-        }
-
-        .game-stats {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .level-results {
-            margin: 1rem 0;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fall {
-            from { transform: translateY(-100px); }
-            to { transform: translateY(450px); }
-        }
-
-        @keyframes explode {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-
-        @media (max-width: 768px) {
-            .gradient-text {
-                font-size: 2rem;
-            }
-            
-            .menu-nav {
-                max-width: 250px;
-            }
-            
-            .level-container {
-                padding: 1rem;
-            }
-            
-            .quiz-options {
-                grid-template-columns: 1fr;
-            }
-            
-            .rps-choice img {
-                width: 80px;
-                height: 80px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body data-theme="dark">
-    <!-- Главное меню -->
-    <section id="main-menu" class="screen active">
-        <h1 class="gradient-text">Спидран по играм Ali-GG</h1>
-        <nav class="menu-nav">
-            <button onclick="showScreen('play')">Играть</button>
-            <button onclick="showScreen('instructions')">Инструкция</button>
-            <button onclick="showScreen('authors')">Авторы</button>
-            <button onclick="showScreen('settings')">Настройки</button>
-        </nav>
-    </section>
+<body class="dark-theme"> <div class="container">
 
-    <!-- Экран игры -->
-    <section id="play" class="screen">
-        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
-        <div class="level-container">
-            <!-- Уровни будут подгружаться динамически через JS -->
-        </div>
-        <div class="timer">Время: <span id="global-timer">00:00:00</span></div>
-    </section>
-
-    <!-- Экран инструкции -->
-    <section id="instructions" class="screen">
-        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
-        <h2>Инструкция</h2>
-        <div class="instructions-content">
-            <p>Добро пожаловать в спидран по играм! Ваша задача - пройти 5 уровней как можно быстрее.</p>
-            <ol>
-                <li><strong>Угадай число:</strong> С помощью ползунка выберите число от 0 до 100. Получайте подсказки "больше" или "меньше".</li>
-                <li><strong>Найди пару:</strong> Открывайте карты и находите все пары за минимальное количество ходов.</li>
-                <li><strong>Камень-Ножницы-Бумага:</strong> Выиграйте у робота 3 раза.</li>
-                <li><strong>Викторина:</strong> Ответьте правильно на 10 вопросов из базы.</li>
-                <li><strong>2D Игра:</strong> Соберите 15 изумрудов, избегая бомб.</li>
-            </ol>
-            <p>Удачи!</p>
-        </div>
-    </section>
-
-    <!-- Экран авторов -->
-    <section id="authors" class="screen">
-        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
-        <h2>Авторы</h2>
-        <div class="authors-content">
-            <p>Этот проект был создан Ali-GG.</p>
-            <div class="social-links">
-                <a href="https://youtube.com/ваш_канал" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="https://tiktok.com/ваш_аккаунт" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                <a href="https://t.me/ваш_канал" target="_blank" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+        <div id="main-menu" class="screen active">
+            <h1 class="title">Спидран по играм Ali-GG</h1>
+            <div class="menu-buttons">
+                <button data-screen="game-area">Играть</button>
+                <button data-screen="instructions">Инструкция</button>
+                <button data-screen="author">Автор</button>
+                <button data-screen="settings">Настройки</button>
             </div>
         </div>
-    </section>
-
-    <!-- Экран настроек -->
-    <section id="settings" class="screen">
-        <div class="back-button" onclick="showScreen('main-menu')"><i class="fas fa-arrow-left"></i> Назад</div>
-        <h2>Настройки</h2>
-        <div class="settings-content">
-            <div class="setting">
-                <label for="theme-switch">Темная тема:</label>
-                <label class="switch">
-                    <input type="checkbox" id="theme-switch" checked>
-                    <span class="slider round"></span>
-                </label>
+        
+        <div id="game-area" class="screen">
+            <div class="game-header">
+                <div id="timer">Время: 0.00с</div>
+                <div id="level-indicator">Уровень 1/7</div>
             </div>
-            <div class="setting">
-                <label for="volume-slider">Громкость:</label>
-                <input type="range" id="volume-slider" min="0" max="100" value="80">
-            </div>
-        </div>
-    </section>
 
-    <script>
-        // Основные переменные и состояние приложения
-        let currentScreen = 'main-menu';
-        let gameState = {
-            currentLevel: 1,
-            levelTimes: [],
-            totalTime: 0,
-            timerInterval: null
-        };
-
-        // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', function() {
-            // Восстановление темы из localStorage
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            document.getElementById('theme-switch').checked = (savedTheme === 'dark');
-            
-            // Восстановление громкости
-            const savedVolume = localStorage.getItem('volume') || 80;
-            document.getElementById('volume-slider').value = savedVolume;
-            
-            // Показ главного меню
-            showScreen('main-menu');
-            
-            // Настройки темы
-            document.getElementById('theme-switch').addEventListener('change', function(e) {
-                const theme = e.target.checked ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-            });
-            
-            // Настройки громкости
-            document.getElementById('volume-slider').addEventListener('input', function(e) {
-                localStorage.setItem('volume', e.target.value);
-            });
-        });
-
-        // Переключение между экранами
-        function showScreen(screenId) {
-            // Скрыть все экраны
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            // Показать запрошенный экран
-            document.getElementById(screenId).classList.add('active');
-            currentScreen = screenId;
-            
-            // Если переходим к игре, инициализируем уровень
-            if (screenId === 'play') {
-                initializeLevel(gameState.currentLevel);
-                startTimer();
-            }
-        }
-
-        // Инициализация уровня игры
-        function initializeLevel(levelNumber) {
-            const levelContainer = document.querySelector('.level-container');
-            levelContainer.innerHTML = ''; // Очистка контейнера
-            
-            switch(levelNumber) {
-                case 1:
-                    initGuessNumberGame(levelContainer);
-                    break;
-                case 2:
-                    initMemoryGame(levelContainer);
-                    break;
-                case 3:
-                    initRockPaperScissors(levelContainer);
-                    break;
-                case 4:
-                    initQuizGame(levelContainer);
-                    break;
-                case 5:
-                    init2DGame(levelContainer);
-                    break;
-                default:
-                    showResults();
-            }
-        }
-
-        // Таймер игры
-        function startTimer() {
-            clearInterval(gameState.timerInterval);
-            const startTime = Date.now() - gameState.totalTime;
-            
-            gameState.timerInterval = setInterval(() => {
-                const elapsedTime = Date.now() - startTime;
-                gameState.totalTime = elapsedTime;
-                updateTimerDisplay(elapsedTime);
-            }, 10);
-        }
-
-        function stopTimer() {
-            clearInterval(gameState.timerInterval);
-        }
-
-        function updateTimerDisplay(time) {
-            const hours = Math.floor(time / 3600000);
-            const minutes = Math.floor((time % 3600000) / 60000);
-            const seconds = Math.floor((time % 60000) / 1000);
-            const ms = Math.floor((time % 1000) / 10);
-            
-            document.getElementById('global-timer').textContent = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
-        }
-
-        // Переход к следующему уровню
-        function nextLevel() {
-            // Зафиксировать время прохождения текущего уровня
-            const levelTime = gameState.totalTime - gameState.levelTimes.reduce((a, b) => a + b, 0);
-            gameState.levelTimes.push(levelTime);
-            
-            // Перейти к следующему уровню или показать результаты
-            gameState.currentLevel++;
-            if (gameState.currentLevel <= 5) {
-                initializeLevel(gameState.currentLevel);
-            } else {
-                showResults();
-            }
-        }
-
-        // Показ результатов после прохождения всех уровней
-        function showResults() {
-            stopTimer();
-            
-            const levelContainer = document.querySelector('.level-container');
-            levelContainer.innerHTML = `
-                <h2>Результаты</h2>
-                <p>Общее время: ${formatTime(gameState.totalTime)}</p>
-                <div class="level-results">
-                    ${gameState.levelTimes.map((time, index) => `
-                        <p>Уровень ${index + 1}: ${formatTime(time)}</p>
-                    `).join('')}
-                </div>
-                <button onclick="showScreen('main-menu'); gameState = { currentLevel: 1, levelTimes: [], totalTime: 0, timerInterval: null }">В главное меню</button>
-            `;
-        }
-
-        function formatTime(time) {
-            const minutes = Math.floor(time / 60000);
-            const seconds = Math.floor((time % 60000) / 1000);
-            const ms = Math.floor((time % 1000) / 10);
-            
-            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
-        }
-
-        // ===== РЕАЛИЗАЦИЯ КОНКРЕТНЫХ ИГР =====
-
-        // 1. Игра "Угадай число"
-        function initGuessNumberGame(container) {
-            const secretNumber = Math.floor(Math.random() * 101);
-            let attempts = 0;
-            
-            container.innerHTML = `
-                <h2>Уровень 1: Угадай число</h2>
+            <div id="level-1" class="game-level">
+                <h2>Уровень 1: Угадай число от 0 до 100</h2>
+                <p id="guess-hint">Двигай смайлик, чтобы угадать число</p>
                 <div class="slider-container">
-                    <input type="range" min="0" max="100" value="50" class="slider" id="number-slider">
-                    <div class="slider-value">Текущее значение: <span id="current-value">50</span></div>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="guess-slider">
+                    <div class="slider-emoji" id="slider-emoji">😃</div>
                 </div>
-                <button id="guess-button">Проверить</button>
-                <div id="hint" class="hint"></div>
-            `;
-            
-            const slider = document.getElementById('number-slider');
-            const currentValue = document.getElementById('current-value');
-            const guessButton = document.getElementById('guess-button');
-            const hint = document.getElementById('hint');
-            
-            slider.addEventListener('input', () => {
-                currentValue.textContent = slider.value;
-            });
-            
-            guessButton.addEventListener('click', () => {
-                attempts++;
-                const guess = parseInt(slider.value);
-                
-                if (guess === secretNumber) {
-                    hint.textContent = `Поздравляю! Вы угадали число ${secretNumber} за ${attempts} попыток.`;
-                    hint.style.color = 'var(--success-color)';
-                    
-                    // Автопереход через 2 секунды
-                    setTimeout(nextLevel, 2000);
-                } else if (guess < secretNumber) {
-                    hint.textContent = 'Попробуйте число больше';
-                    hint.style.color = 'var(--error-color)';
-                    // Анимация появления подсказки
-                    hint.style.animation = 'fadeIn 0.5s';
+                <p class="current-number">Твой выбор: <span id="slider-value">50</span></p>
+                <button id="check-guess-btn">Проверить</button>
+            </div>
+
+            <div id="level-2" class="game-level">
+                 <h2>Уровень 2: Найди пару</h2>
+                 <div id="memory-board" class="memory-board"></div>
+            </div>
+
+            <div id="level-3" class="game-level">
+                <h2>Уровень 3: Камень-Ножницы-Бумага</h2>
+                <p>Выиграй у робота 3 раза!</p>
+                <div class="rps-choices">
+                    <img src="images/rock.png" alt="Камень" data-choice="rock">
+                    <img src="images/paper.png" alt="Бумага" data-choice="paper">
+                    <img src="images/scissors.png" alt="Ножницы" data-choice="scissors">
+                </div>
+                <div class="rps-result">
+                    <div class="player-side">
+                        <h3>Твой выбор</h3>
+                        <div id="player-choice-display"></div>
+                    </div>
+                    <div class="computer-side">
+                        <h3>Выбор робота</h3>
+                        <div id="computer-choice-display"></div>
+                    </div>
+                </div>
+                <p id="rps-message">Сделай свой ход!</p>
+                <p id="rps-score">Побед: 0/3</p>
+            </div>
+
+            <div id="level-4" class="game-level">
+                <h2>Уровень 4: Викторина</h2>
+                <p>Ответь правильно на 10 вопросов</p>
+                <div id="quiz-question" class="quiz-question"></div>
+                <div id="quiz-options" class="quiz-options"></div>
+                <p id="quiz-score">Правильных ответов: 0/10</p>
+            </div>
+
+            <div id="level-5" class="game-level">
+                <h2>Уровень 5: Собери изумруды</h2>
+                <p>Собери 15 изумрудов и увернись от бомб!</p>
+                <canvas id="game-canvas" width="800" height="600"></canvas>
+                <p id="emerald-score">Собрано изумрудов: 0/15</p>
+            </div>
+             <div id="level-6" class="game-level"><h2>Уровень 6: Скоро будет...</h2></div>
+            <div id="level-7" class="game-level"><h2>Уровень 7: Скоро будет...</h2></div>
+        </div>
+
+        <div id="instructions" class="screen">
+            <h1 class="title">Инструкция</h1>
+            <div class="text-content">
+                <p>Добро пожаловать в "Спидран по играм Ali-GG"!</p>
+                <p><strong>Цель:</strong> Пройти все 7 уровней как можно быстрее. Ваше общее время будет записано в конце.</p>
+                <ul>
+                    <li><strong>Уровень 1: Угадай число</strong> - Используйте ползунок, чтобы найти загаданное число от 0 до 100, следуя подсказкам.</li>
+                    <li><strong>Уровень 2: Найди пару</strong> - Открывайте карточки и запоминайте их, чтобы найти все 6 пар.</li>
+                    <li><strong>Уровень 3: Камень-Ножницы-Бумага</strong> - Одержите 3 победы над роботом. Ничьи и поражения не считаются.</li>
+                    <li><strong>Уровень 4: Викторина</strong> - Дайте 10 правильных ответов на вопросы из случайной подборки.</li>
+                    <li><strong>Уровень 5: 2D-сбор</strong> - Управляйте персонажем с помощью стрелок на клавиатуре, соберите 15 изумрудов и избегайте бомб.</li>
+                </ul>
+                <p>Удачи в прохождении!</p>
+            </div>
+            <button class="back-to-menu">Назад</button>
+        </div>
+
+        <div id="author" class="screen">
+            <h1 class="title">Автор</h1>
+            <div class="text-content">
+                <p>Следи за мной в социальных сетях!</p>
+                <div class="social-links">
+                    <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+                    <a href="https://tiktok.com" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+                    <a href="https://telegram.org" target="_blank"><i class="fab fa-telegram"></i> Telegram</a>
+                </div>
+                 <p>Замените ссылки на свои!</p>
+            </div>
+            <button class="back-to-menu">Назад</button>
+        </div>
+
+        <div id="settings" class="screen">
+            <h1 class="title">Настройки</h1>
+            <div class="settings-options">
+                <div class="setting-item">
+                    <label for="theme-toggle">Тема:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span>Светлая</span>
+                </div>
+                <div class="setting-item">
+                    <label for="volume-slider">Громкость звука:</label>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+                </div>
+            </div>
+            <button class="back-to-menu">Назад</button>
+        </div>
+        
+        <div id="results-screen" class="screen">
+            <h1 class="title">Поздравляем!</h1>
+            <div class="text-content">
+                <p>Вы завершили спидран!</p>
+                <p id="final-time">Ваше общее время: 0.00с</p>
+                <h3>Время по уровням:</h3>
+                <ul id="level-times-list"></ul>
+            </div>
+            <button class="back-to-menu">В главное меню</button>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
